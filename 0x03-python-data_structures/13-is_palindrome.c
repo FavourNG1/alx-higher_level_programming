@@ -1,92 +1,71 @@
-#!/usr/bin/python3
-#include <stdio.h>
-#include <stdlib.h>
+#include "lists.h"
 
-/* Definition of a singly linked list node */
-typedef struct ListNode {
-    int val;
-    struct ListNode* next;
-} listint_t;
+/**
+ * reverse_listint - reverses a linked list
+ * @head: pointer to the first node in the list
+ * Return: pointer to the first node in the new list
+ */
+void reverse_listint(listint_t **head)
+{
+	listint_t *prev = NULL;
+	listint_t *current = *head;
+	listint_t *next = NULL;
 
-/* Function to check if a linked list is a palindrome */
-int is_palindrome(listint_t** head) {
-    if (*head == NULL || (*head)->next == NULL) {
-        return 1;
-    }
+	while (current)
+	{
+		next = current->next;
+		current->next = prev;
+		prev = current;
+		current = next;
+	}
 
-    /* Find the middle of the linked list */
-    listint_t* slow = *head;
-    listint_t* fast = *head;
-    while (fast->next != NULL && fast->next->next != NULL) {
-        slow = slow->next;
-        fast = fast->next->next;
-    }
-
-    /* Reverse the second half of the linked list */
-    listint_t* prev = NULL;
-    listint_t* curr = slow->next;
-    listint_t* next;
-    while (curr != NULL) {
-        next = curr->next;
-        curr->next = prev;
-        prev = curr;
-        curr = next;
-    }
-
-    /* Compare the first half with the reversed second half */
-    listint_t* p1 = *head;
-    listint_t* p2 = prev;
-    while (p2 != NULL) {
-        if (p1->val != p2->val) {
-            return 0;
-        }
-        p1 = p1->next;
-        p2 = p2->next;
-    }
-
-    return 1;
+	*head = prev;
 }
 
-/* Utility function to create a new node */
-listint_t* createNode(int val) {
-    listint_t* newNode = (listint_t*)malloc(sizeof(listint_t));
-    newNode->val = val;
-    newNode->next = NULL;
-    return newNode;
-}
+/**
+ * is_palindrome - checks if a linked list is a palindrome
+ * @head: double pointer to the linked list
+ *
+ * Return: 1 if it is, 0 if not
+ */
+int is_palindrome(listint_t **head)
+{
+	listint_t *slow = *head, *fast = *head, *temp = *head, *dup = NULL;
 
-/* Utility function to insert a node at the beginning of the linked list */
-void insertNode(listint_t** head, int val) {
-    listint_t* newNode = createNode(val);
-    newNode->next = *head;
-    *head = newNode;
-}
+	if (*head == NULL || (*head)->next == NULL)
+		return (1);
 
-/* Function to print the linked list */
-void printList(listint_t* head) {
-    listint_t* temp = head;
-    while (temp != NULL) {
-        printf("%d ", temp->val);
-        temp = temp->next;
-    }
-    printf("\n");
-}
+	while (1)
+	{
+		fast = fast->next->next;
+		if (!fast)
+		{
+			dup = slow->next;
+			break;
+		}
+		if (!fast->next)
+		{
+			dup = slow->next->next;
+			break;
+		}
+		slow = slow->next;
+	}
 
-int main() {
-    /* Example usage */
-    listint_t* head = NULL;
+	reverse_listint(&dup);
 
-    insertNode(&head, 1);
-    insertNode(&head, 2);
-    insertNode(&head, 3);
-    insertNode(&head, 2);
-    insertNode(&head, 1);
+	while (dup && temp)
+	{
+		if (temp->n == dup->n)
+		{
+			dup = dup->next;
+			temp = temp->next;
+		}
+		else
+			return (0);
+	}
 
-    printf("Original list: ");
-    printList(head);
+	if (!dup)
+		return (1);
 
-    int result = is_palindrome(&head);
-    printf("Is palindrome: %d\n", result);
-
-    return 0;
+	return (0);
 }
